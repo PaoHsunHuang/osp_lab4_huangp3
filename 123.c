@@ -9,16 +9,14 @@ void openstuff(DIR *ptr,const char *path){
 	DIR *dirp;
 	struct dirent *temp;
 	char *pathname;
-	char *dirname;
+
 	pathname = malloc(sizeof(char)* 256);
-	strcpy(pathname,path);
-//	strcat();
 
-	readdir(ptr);
+
+
 	printf("from directory:%s\n",pathname);
-
-
 	while((temp = readdir(ptr)) != NULL){
+	strcpy(pathname,path);
 
 	if((strcmp(temp->d_name, ".")) == 0){
 	}else if((strcmp(temp->d_name, "..")) == 0){
@@ -27,14 +25,16 @@ void openstuff(DIR *ptr,const char *path){
 		if(temp->d_type == DT_DIR){
 			strcat(pathname,"/");
 			strcat(pathname,temp->d_name);
-
+//			printf("dir:%s\n",dirname);
+//			printf("path:%s\n",pathname);
+//
 			if(dirp = opendir(pathname)){
 			openstuff(dirp, pathname);
 			}else{
-			printf("can't open directoy:%s\n",temp->d_name);
+			printf("can't open directoy:%s\n",pathname);
 			}
 		}else if(temp->d_type == DT_REG){
-		
+
 		printf("%s/%s\n",path,temp->d_name);
 		}else{
 		printf("can't type: %s\n",temp->d_name);
@@ -43,11 +43,11 @@ void openstuff(DIR *ptr,const char *path){
 	}
 	}
 
-
+	free(pathname);
 }
 
 int main(){
-char *file = "/home/huangp3/test";
+char *file = "/home/huangp3/hw1";
 DIR *dirp;
 
 if(dirp = opendir(file)){
