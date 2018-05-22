@@ -2,10 +2,49 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <dirent.h>
 
-//#include <sys/type.h>
-//#include <dirent.h>
+
+
+void openstuff(DIR *ptr,const char *path){
+	DIR *dirp;
+	struct dirent *temp;
+	char *pathname;
+	pathname = malloc(sizeof(char)* 256);
+
+
+	while((temp = readdir(ptr)) != NULL){
+	//everytime run the loop, rewrite pathname
+	//just in case it is overuse by last directory 
+	strcpy(pathname,path);
+
+	if((strcmp(temp->d_name, ".")) == 0){
+	}else if((strcmp(temp->d_name, "..")) == 0){
+	}else{
+
+		if(temp->d_type == DT_DIR){
+			//put / and the directoy name after path
+			//use it to recursive open directoy 
+			strcat(pathname,"/");
+			strcat(pathname,temp->d_name);
+
+			//if can open directory call openstuff it self
+			if(dirp = opendir(pathname)){
+			openstuff(dirp,pathname);
+			}else{
+			printf("can't open directory: %s",temp->d_name);
+			}
+		}else if(temp->d_type == DT_REG){
+		//if the file is text, print file name and path
+		printf("%s/%s\n",path,temp->d_name);
+		}
+	}
+	}
+}
 int main(){
+DIR *dirp;
 size_t lineSize = 256;
 char *keyword;
 char *inputstring;
@@ -31,7 +70,6 @@ ch = inputstring[stringindex];
 		//just in case user input something else
 		//read and check the keyword
 		if(isalpha(ch) || ch == '_'){
-		keyword = realloc(str,);
 		keyword[index] = ch;
 		index++;
 		}else{
@@ -49,13 +87,6 @@ ch = inputstring[stringindex];
 		//allow user to enter 1 word
 		//or use quotation mark to enter more than 1 word
 
-		//variable check use fo check did user input quotation mark
-		//if user didn't input quotation mark check will be 0
-		//check = 1 mean user already input quotation mark
-		//when system read aonother quotation mark check will be 2
-		//if used only enter 1 word,
-		//check = 2 when read another space
-
 		if(check == 1){
 			if(ch == '"'){
 			check++;
@@ -72,7 +103,6 @@ ch = inputstring[stringindex];
 			}else{
 			searchterm[index] = ch;
 			index++;
-//			printf("readin:%c\n",ch);
 			}
 		}
 
@@ -84,10 +114,10 @@ ch = inputstring[stringindex];
 	}else if (argc == 2){
 		//read in everything,
 		//only check is the input char is \n
-		//read everything until  \n
-		if(ch == '\n'){
-
+		//read 
+		if(ch == ' '){
 		argc++;
+		}else if (ch == '\n'){
 		}else{
 		dir[index] = ch;
 		index++;
@@ -100,17 +130,27 @@ ch = inputstring[stringindex];
 	}
 stringindex++;
 }
+//check is the first char of path is /
+//if not, print invalid input
 if(dir[0] != '/'){
 printf("Invalid input: Invalid direction\n");
 return 0;
 }
+
+//check is the last char of path is /
+//if it is / , print invalid input
 if(dir[index] == '/'){
 printf("Invalude input: end of direction can't be /\n");
 return 0;
 }
 
+//start loop
 
-
+if(dirp = opendir(dir)){
+openstuff(dirp,dir);
+}else{
+printf("can't open directory\n");
+}
 
 //============
 printf("part 1:%s\n",keyword);
