@@ -43,10 +43,8 @@ void openstuff(DIR *ptr, const char *path, char *search){
 				strcat(pathname,"/");
 				strcat(pathname,temp->d_name);
 
-
 				//if can open directory call openstuff it self
 				if(dirp = opendir(pathname)){
-				printf("read directory: %s\n",pathname);
 				openstuff(dirp,pathname,word);
 				}else{
 				printf("can't open directory: %s",temp->d_name);
@@ -144,6 +142,11 @@ ch = inputstring[stringindex];
 	}
 stringindex++;
 }
+//check did user input file_search in first argument
+if(strcmp(keyword,"file_search")!= 0){
+printf("Invalid input: Invalid syntax\n'");
+}
+
 //check is the first char of path is /
 //if not, print invalid input
 if(dir[0] != '/'){
