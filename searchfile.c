@@ -8,13 +8,15 @@
 
 
 
-void openstuff(DIR *ptr,const char *path){
+void openstuff(DIR *ptr, const char *path, char *search){
 	DIR *dirp;
 	struct dirent *temp;
 	char *pathname;
+	char *word;
+	word = malloc(sizeof(char) * 256);
 	pathname = malloc(sizeof(char)* 256);
 
-
+	strcpy(word,search);
 	while((temp = readdir(ptr)) != NULL){
 	//everytime run the loop, rewrite pathname
 	//just in case it is overuse by last directory 
@@ -23,22 +25,33 @@ void openstuff(DIR *ptr,const char *path){
 	if((strcmp(temp->d_name, ".")) == 0){
 	}else if((strcmp(temp->d_name, "..")) == 0){
 	}else{
+		//check is keyword is inside file or directory name
 
-		if(temp->d_type == DT_DIR){
-			//put / and the directoy name after path
-			//use it to recursive open directoy 
-			strcat(pathname,"/");
-			strcat(pathname,temp->d_name);
+		if(strstr(temp->d_name,search) != NULL){
+			if(temp->d_type == DT_DIR){
+			//if the file is directory, add : at the end
+			printf("%s/%s:\n",path,temp->d_name);
 
-			//if can open directory call openstuff it self
-			if(dirp = opendir(pathname)){
-			openstuff(dirp,pathname);
-			}else{
-			printf("can't open directory: %s",temp->d_name);
+			}else if (temp->d_type == DT_REG){
+			//if the file is text, print file name and path
+			printf("%s/%s\n",path,temp->d_name);
 			}
-		}else if(temp->d_type == DT_REG){
-		//if the file is text, print file name and path
-		printf("%s/%s\n",path,temp->d_name);
+		}else{
+				if(temp->d_type == DT_DIR){
+				//put / and the directoy name after path
+				//use it to recursive open directoy 
+				strcat(pathname,"/");
+				strcat(pathname,temp->d_name);
+
+
+				//if can open directory call openstuff it self
+				if(dirp = opendir(pathname)){
+				printf("read directory: %s\n",pathname);
+				openstuff(dirp,pathname,word);
+				}else{
+				printf("can't open directory: %s",temp->d_name);
+				}
+			}
 		}
 	}
 	}
@@ -106,6 +119,7 @@ ch = inputstring[stringindex];
 			}
 		}
 
+		//if check = 2, there is 2 quotationmark or read a space
 		if(check == 2){
 			index = 0;
 			argc++;
@@ -147,16 +161,11 @@ return 0;
 //start loop
 
 if(dirp = opendir(dir)){
-openstuff(dirp,dir);
+openstuff(dirp,dir,searchterm);
 }else{
 printf("can't open directory\n");
 }
 
-//============
-printf("part 1:%s\n",keyword);
-printf("part 2:%s\n",searchterm);
-printf("part 3:%s\n",dir);
-//=================
 free(inputstring);
 free(keyword);
 free(searchterm);
