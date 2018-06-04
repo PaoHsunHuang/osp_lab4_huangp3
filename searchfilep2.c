@@ -9,7 +9,7 @@
 #include <pthread.h>
 #include <errno.h>
 
-#define threadNum 1
+#define threadNum 4
 #define max 80
 //takes a file/dir as argument, recurses, // prints name if empty dir or not a dir (leaves)
 
@@ -113,7 +113,6 @@ void *recur_file_search(void *file) {
 	//printf("========================\n");
 //	printf("open:%s\n", pathcp);
 
-	
 	DIR *d = opendir(pathcp);
 	//NULL means not a directory (or another, unlikely error)
 	if(d == NULL)
@@ -172,7 +171,6 @@ void *recur_file_search(void *file) {
 	//		pthread_tryjoin_np(threads[k],(void*)&threadarg[k]->empty)
 			if(threadarg[k]->empty == 1){
 
-
 			threadarg[k]->empty = 0;
 			threadarg[k]->path = next_file_str;
 			threadarg[k]->threadid = k;
@@ -180,7 +178,7 @@ void *recur_file_search(void *file) {
 //			printf("thread path:%s\n",threadarg[k]->path);
 			pthread_create(&threads[k],NULL, recur_file_search,(void*)threadarg[k]);
 //			printf("=====================\n");
-//			break;
+			break;
 
 			}else if(threadarg[k]->empty == 0){
 			threadarg[k]->path = next_file_str;
@@ -188,7 +186,7 @@ void *recur_file_search(void *file) {
 //			printf("thread[%d]:busy\n",k);
 //			printf("thread path:%s\n",threadarg[k]->path);
 			recur_file_search((void*) threadarg[k]);
-
+			break;
 			}
 
 			}
@@ -202,7 +200,5 @@ void *recur_file_search(void *file) {
 
 	}
 	//close the directory, or we will have too many files opened (bad times)
-//	free(pathcp);
 	closedir(d);
-//	cp->empty = 1;	
 }
