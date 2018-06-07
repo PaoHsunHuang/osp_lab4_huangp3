@@ -1,0 +1,37 @@
+A.
+1
+because not everything is in multithread, only if everything is running in parallel and
+nonstop it could be able to N-thread = N x faster
+
+2
+i don't think so,
+i think the only way to improve performance is let all thread keep running without break, 
+therefore we will call our pthreaed_create whenever any thread is empty,
+so i don't think is the directory strucutre problem
+
+3
+No, my multithreaded version is even slower than normall one.
+i use thread 0 to assign the thread for everything,
+but i think the most efficient way to do it is allow every thread
+create another threads,
+but it will be very hard to handle the pthread_join
+
+B.
+1
+create a string array, and let it be a to do list.
+assign thread function in main, and put new function whenever thread is finish
+its task
+but it will have to change whole function
+since it won't be able to use recursive.
+or it will run into same path several time
+
+2
+throw everything need to ouput into an string array,
+and print them out at the end. since it is an IO-bound program,
+we could reduce the IO time to get better performance
+
+
+
+C.
+I think when we run it in first time, part of data would be store into our memory, and when
+we are going to run second time, system will directly use the data that calculate last time  
